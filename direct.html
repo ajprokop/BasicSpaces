@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Spaces Direct Message</title>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+   </head>
+   <body>
+      <div class="container">
+         <h1>Spaces Direct Message</h1>
+         <div class="row">
+            <div class="col-4">
+               <label for="jwt">JWT:</label>
+               <textarea class="form-control" id="jwt" rows="1"></textarea>
+            </div>
+            <div class="col-3">
+               <label for="email">Email Address:</label>
+               <input class="form-control" type="text" id="email" rows="1"></input>
+            </div>
+            <div class="col-2">
+               <br>
+               <button id="authUser" class="btn btn-primary" onclick="authUser()">Authenticate</button>
+            </div>
+            <div class="col-2">
+               <br>
+               <button id="connect" class="btn btn-primary" onclick="startConnect()">Connect</button>
+            </div>
+            <br>
+         </div>
+         <div class="row">
+            <div class="col-12">
+               <div class="form-group">
+                  <label for="exampleFormControlTextarea1">Message:</label>
+                  <textarea class="form-control" id="message" rows="3"></textarea>
+               </div>
+               <button id="sendMsg" class="btn btn-success" onclick="sendMsg()">Send</button>
+            </div>
+         </div>
+         <hr/>
+         <div class="row">
+            <div class="col-12">
+               <textarea readonly="readonly" class="form-control" id="console-log" rows="30"></textarea>
+            </div>
+         </div>
+      </div>
+      <script type="text/javascript">
+         $(document).ready(init);
+         
+         function init() {
+         	$('#message').prop("readonly", true);
+         	$('#sendMsg').prop("disabled", true);
+         	document.getElementById("connect").innerHTML = "Connect";
+         }
+         
+         var spacesToken;
+		 var userId;
+         var socketURL = "https://spacesapis-socket.avayacloud.com/chat";
+         var spacesID;
+         var socketio = "";
+         var password;
+         
+         function connectSocket() {
+         	socketio = io.connect(
+         		socketURL, {
+         			query: 'tokenType=jwt&token=' + spacesToken,
+         			transports: ['websocket']
+         		}
+         	);
+         	socketio.on('connect', function () {
+         		var spaceToSubscribe = {
+         			channel: {
+         				_id: spacesID,
+         				type: 'topic',
+         				password: password
+         			}
+         		};
+         		socketio.emit('SUBSCRIBE_CHANNEL', spaceToSubscribe);
+         		document.getElementById("connect").innerHTML = "Disconnect";
+         	});
+         
+         	socketio.on('disconnect', function () {
+         		console.log("Socket disconnect");
+         	});
+         
+         	socketio.on('connect_error', function () {
+         		console.log("Socket connect_error");
+         	});
+         
+         	socketio.on('error', function () {
+         		console.log("Socket error");
+         	});
+         
+         	socketio.on('CHANNEL_SUBSCRIBED', function () {
+         		$('#chatMsg').prop("disabled", false);
+         		$('#sendMsg').prop("disabled", false);
+         		$('#message').prop("readonly", false);
+         	});
+         
+         	socketio.on('CHANNEL_UNSUBSCRIBED', function () {
+         		console.log("CHANNEL_UNSUBSCRIBED");
+         	});
+         
+         	socketio.on('SUBSCRIBE_CHANNEL_FAILED', function () {
+         		console.log("SUBSCRIBE_CHANNEL_FAILED");
+         	});
+         
+         	socketio.on('SEND_MESSAGE_FAILED', function (msg) {
+         		console.log("SEND_MESSAGE_FAILED");
+         	});
+         
+         	socketio.on('MESSAGE_SENT', function (msg) {
+         		var category = msg.category;
+         		var message;
+         		var description;
+         		var strLength;
+         		if (category == "chat") {
+         			message = msg.content.bodyText;
+         			if (msg.content.data !== undefined) {
+         				if (msg.content.data.length > 0) {
+         					message = msg.sender.displayname + ": " + msg.content.data[0].name + " " + msg.content.data[0].path;
+         				}
+         			}
+         			// Messages from Spaces come in the form <p>message goes here<p>
+         			if (message.includes("<p>")) {
+         				strLength = msg.content.bodyText.length;
+         				// Decode ' and " characters
+         				message = msg.sender.displayname + ": " + message.substring(3, strLength - 4).replace(new RegExp("&" + "#" + "x27;", "g"), "'").replace(/&quot;/g, '"');
+         			} else {
+         				message = msg.sender.displayname + ": " + message.replace(new RegExp("&" + "#" + "x27;", "g"), "'").replace(/&quot;/g, '"');
+         			}
+         			trace(message);
+         		}
+         	});
+         }
+         
+         function sendMsg() {
+         	var message = {
+         		content: {
+         			bodyText: $('#message').val()
+         		},
+         		sender: {
+         			type: 'user'
+         		},
+         		category: 'chat',
+         		topicId: spacesID
+         	};
+         
+         	socketio.emit('SEND_MESSAGE', message);
+         	document.getElementById('message').value = "";
+         }
+         
+         function clearTrace() {
+         	var consoleTxt = $('#console-log').val();
+         	$('#console-log').val("");
+         }
+         
+         function disconnect() {
+         	var spaceToUnsubscribe = {
+         		channel: {
+         			_id: spacesID,
+         			type: 'topic',
+         			password: password
+         		}
+         	};
+         	socketio.emit('UNSUBSCRIBE_CHANNEL', spaceToUnsubscribe);
+         	init();
+         	clearTrace();
+			socketio.disconnect();
+         	socketio = null;
+         }
+         
+         function startConnect() {
+         	if (document.getElementById("connect").innerHTML == "Disconnect") {
+         		disconnect();
+         		return;
+         	}
+			spacesToken = document.getElementById('jwt').value;        	
+			email = document.getElementById('email').value;       	
+         	$.ajax({
+         		headers: {
+         			'Authorization': 'jwt ' + spacesToken,
+         			'Accept': 'application/json'
+         		},
+         		url: "https://spacesapis.avayacloud.com/api/users/meetingroom/" + email,
+         		type: 'Get',
+         		success: function (data) {
+         			userId = data.data.cid;
+        			getDirectMessageSpace();       			
+         		},
+         		error: function (error) {}
+         	});
+         }
+         
+         function getDirectMessageSpace() {
+         	$.ajax({
+         		headers: {
+         			'Authorization': 'jwt ' + spacesToken,
+         			'Accept': 'application/json'
+         		},
+         		url: "https://spacesapis.avayacloud.com/api/spaces/direct/user/" + userId,
+         		type: "GET",
+         		success: function (data) {
+					spacesID = data.data[0]._id;
+					console.log("Spaces Id: " + spacesID);
+					connectSocket();
+         		}
+         	});
+         }
+		 
+		 function authUser() {
+         	$.ajax({
+         		data: JSON.stringify({
+         			"displayname": "Chatty McChat",
+         			"username": "Anonymous"
+         		}),
+         		url: "https://spacesapis.avayacloud.com/api/anonymous/auth",
+         		contentType: 'application/json',
+         		type: 'POST',
+         		success: function (data) {
+         			spacesToken = data.token;
+					document.getElementById('jwt').value = spacesToken;
+         		},
+         		error: function (error) {}
+         	});
+		}
+        
+         function trace(text) {
+         	text = text.trim();
+         	const now = (window.performance.now() / 1000).toFixed(3);
+         	var consoleTxt = $('#console-log').val();
+         	var log = text;
+         	$('#console-log').val(consoleTxt + "\n\n" + log);
+         }
+               
+      </script>
+   </body>
+</html>
