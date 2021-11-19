@@ -119,7 +119,9 @@
          			message = msg.content.bodyText;
          			if (msg.content.data !== undefined) {
          				if (msg.content.data.length > 0) {
-         					message = msg.sender.displayname + ": " + msg.content.data[0].name + " " + msg.content.data[0].path;
+         					message = msg.sender.displayname + ": " + message + " " + msg.content.data[0].name + " " + msg.content.data[0].path;
+							trace(message);
+							return;
          				}
          			}
          			// Messages from Spaces come in the form <p>message goes here<p>
