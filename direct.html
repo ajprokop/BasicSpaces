@@ -21,7 +21,7 @@
             </div>
             <div class="col-2">
                <br>
-               <button id="authUser" class="btn btn-primary" onclick="authUser()">Authenticate</button>
+               <button id="authUser" class="btn btn-primary" onclick="authUser()">Obtain JWT</button>
             </div>
             <div class="col-2">
                <br>
@@ -55,11 +55,9 @@
          }
          
          var spacesToken;
-		 var userId;
          var socketURL = "https://spacesapis-socket.avayacloud.com/chat";
          var spacesID;
          var socketio = "";
-         var password;
          
          function connectSocket() {
          	socketio = io.connect(
@@ -72,8 +70,7 @@
          		var spaceToSubscribe = {
          			channel: {
          				_id: spacesID,
-         				type: 'topic',
-         				password: password
+         				type: 'topic'
          			}
          		};
          		socketio.emit('SUBSCRIBE_CHANNEL', spaceToSubscribe);
@@ -81,7 +78,7 @@
          	});
          
          	socketio.on('disconnect', function () {
-         		console.log("Socket disconnect");
+         		//console.log("Socket disconnect");
          	});
          
          	socketio.on('connect_error', function () {
@@ -119,6 +116,7 @@
          			message = msg.content.bodyText;
          			if (msg.content.data !== undefined) {
          				if (msg.content.data.length > 0) {
+							// This is a message with a file
          					message = msg.sender.displayname + ": " + message + " " + msg.content.data[0].name + " " + msg.content.data[0].path;
 							trace(message);
 							return;
@@ -162,8 +160,7 @@
          	var spaceToUnsubscribe = {
          		channel: {
          			_id: spacesID,
-         			type: 'topic',
-         			password: password
+         			type: 'topic'
          		}
          	};
          	socketio.emit('UNSUBSCRIBE_CHANNEL', spaceToUnsubscribe);
@@ -188,14 +185,14 @@
          		url: "https://spacesapis.avayacloud.com/api/users/meetingroom/" + email,
          		type: 'Get',
          		success: function (data) {
-         			userId = data.data.cid;
-        			getDirectMessageSpace();       			
+         			var userId = data.data.cid;
+        			getDirectMessageSpace(userId);       			
          		},
          		error: function (error) {}
          	});
          }
          
-         function getDirectMessageSpace() {
+         function getDirectMessageSpace(userId) {
          	$.ajax({
          		headers: {
          			'Authorization': 'jwt ' + spacesToken,
@@ -205,7 +202,6 @@
          		type: "GET",
          		success: function (data) {
 					spacesID = data.data[0]._id;
-					console.log("Spaces Id: " + spacesID);
 					connectSocket();
          		}
          	});
