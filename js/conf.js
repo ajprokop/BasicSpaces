@@ -1,5 +1,6 @@
 // To create video connection to Spaces room:
 //
+// Entry point from html:  openSpacesConference()
 // Create anonymous user -- obtain authentication token
 // Join Space
 // Create socket.io connection
