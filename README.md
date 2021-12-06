@@ -1,5 +1,5 @@
 # BasicSpaces
-Basic web applications that demonstrates Avaya Spaces integration.  index.html mimics Spaces collaboration.  chatexample.html demonstrates how to build an Avaya Spaces websocket application.  direct.html will show you how to create and connect to a new direct message space. rooms.html demonstrates how to create and delete Spaces rooms.  The videos in this repository explain how the applications are run and how the code is organized.
+Basic web applications that demonstrates Avaya Spaces integration.  index.html mimics Spaces collaboration.  chatexample.html demonstrates how to build an Avaya Spaces websocket application.  direct.html will show you how to create and connect to a new direct message space. rooms.html demonstrates how to create and delete Spaces rooms.  presence.html demonstrates how to track different levels of Spaces presence (entering/leaving a room, entering/leaving collaboration). The videos in this repository explain how the applications are run and how the code is organized.
 
 If you do not have an Avaya Spaces account, sign up for a free one here:  https://www.avaya.com/en/products/ucaas/spaces/
 
