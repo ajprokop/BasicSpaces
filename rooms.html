@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Spaces Room Management</title>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+   </head>
+   <body>
+      <div class="container">
+         <h1>Spaces Room Management</h1>
+         <div class="row">
+            <div class="col-4">
+               <label for="jwt">JWT:</label>
+               <textarea class="form-control" id="jwt" rows="1"></textarea>
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-3">
+               <label for="roomName">Room Name:</label>
+               <input class="form-control" type="text" id="roomName">
+            </div>
+            <div class="col-2">
+               <br>
+               <button id="createRoom" class="btn btn-primary" onclick="createRoom()">Create Room</button>
+            </div>
+            <br>
+         </div>
+         <div class="row">
+            <div class="col-4">
+               <label for="roomNumber">Room Number:</label>
+               <textarea class="form-control" id="roomNumber" rows="1"></textarea>
+            </div>
+            <div class="col-2">
+               <br>
+               <button id="deleteRoom" class="btn btn-primary" onclick="deleteRoom()">Delete Room</button>
+            </div>
+         </div>
+      </div>
+      <script type="text/javascript">
+      function createRoom() {
+         $.ajax({
+         	headers: {
+         		'Accept': 'application/json',
+         		'Content-type': 'application/json',
+         		'Authorization': 'jwt ' + document.getElementById('jwt').value
+         	},
+         	data: JSON.stringify(
+         	{
+         		"topic": {
+         			"id": null,
+         			"title": document.getElementById('roomName').value,
+         			"description": "Room created by API call",
+         			"type": "group"
+         		},
+         		"invitees": []
+         	}),
+         	url: 'https://spacesapis.avayacloud.com/api/spaces/invite',
+         	type: "POST",
+         	dataType: "json",
+         	contentType: 'application/json',
+         	success: function(data) {
+				document.getElementById('roomNumber').value = data.data[0].topicId;
+         	},
+         	error: function(error) {
+         		console.log("Create Space Room Error");
+         	}
+         });	
+      }
+         
+      function deleteRoom() {
+         $.ajax({
+         headers: {
+         	'Authorization': 'jwt ' + document.getElementById('jwt').value,
+         	'Accept': 'application/json'
+         },
+         url: 'https://spacesapis.avayacloud.com/api/spaces/' + document.getElementById('roomNumber').value,
+         type: "delete",
+         success: function (data) {
+         	
+         },
+         error: function (error) {
+         	console.log("Room Not Deleted");
+         }
+         });
+      }            
+      </script>
+   </body>
+</html>
