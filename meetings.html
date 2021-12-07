@@ -210,7 +210,6 @@ function startConnect() {
 		contentType: 'application/json',
 		type: 'POST',
 		success: function (data) {
-		console.log("Token " + spacesToken);
 			spacesToken = data.token;
 			joinRoom();
 			connectSocket();
@@ -230,7 +229,7 @@ function joinRoom() {
 		url: 'https://spacesapis.avayacloud.com/api/spaces/' + spacesID + '/join',
 		type: "GET",
 		success: function (data) {
-			console.log("Room joined");
+			//console.log("Room joined");
 		}
 	});
 }
