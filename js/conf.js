@@ -708,7 +708,10 @@ function joinSpace() {
 			socketConnection.on('MEDIA_SESSION_RESPONSE', (msr) => {
 				if(msr.category == "app.event.recording.started") {
 					recordingId = msr.content.recordings[0]._id;
-				}
+				} else if (msr.category == "app.event.meeting.ended") {
+					// Simulate user releasing session if collaboration ended by meeting Admin
+					$("#connectSocket").click();
+				}				
 			});
 			socketConnection.on('SEND_MESSAGE_FAILED', function(error) {
 				//console.log('SEND_MESSAGE_FAILED' + error);
