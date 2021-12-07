@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Spaces Meeting Review</title>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+   </head>
+   <body>
+      <div class="container">
+         <h1>Spaces Meeting Review</h1>
+         <div class="row">
+            <div class="col-4">
+               <label for="room">Room Number:</label>
+               <textarea class="form-control" id="room" rows="1"></textarea>
+            </div>
+            <div class="col-4">
+               <label for="password">Password:</label>
+               <input class="form-control" type="password" id="password" rows="1"></input>
+            </div>
+            <div class="col-4">
+               <br>
+               <button id="connect" class="btn btn-primary" onclick="startConnect()">Connect</button>
+            </div>
+			<br>
+         </div>
+         <hr/>
+         <div class="row">
+            <div class="col-12">
+               <textarea readonly="readonly" class="form-control" id="console-log" rows="40"></textarea>
+            </div>
+         </div>
+      </div>
+      <script type="text/javascript">
+$(document).ready(init);
+
+function init() {
+	document.getElementById("connect").innerHTML = "Connect";
+}
+
+var spacesToken;
+var socketURL = "http://spacesapis-socket.avayacloud.com/chat";
+var spacesID;
+var socketio = "";
+var password;
+
+function connectSocket() {
+	socketio = io.connect(
+		socketURL, {
+			query: 'tokenType=jwt&token=' + spacesToken,
+			transports: ['websocket']
+		}
+	);
+	socketio.on('connect', function () {
+		var spaceToSubscribe = {
+			channel: {
+				_id: spacesID,
+				type: 'topic',
+				password: password
+			}
+		};
+		socketio.emit('SUBSCRIBE_CHANNEL', spaceToSubscribe);
+		document.getElementById("connect").innerHTML = "Disconnect";
+	});
+
+	socketio.on('disconnect', function () {
+		console.log("Socket disconnect");
+	});
+
+	socketio.on('connect_error', function () {
+		console.log("Socket connect_error");
+	});
+
+	socketio.on('error', function () {
+		console.log("Socket error");
+	});
+
+	socketio.on('CHANNEL_SUBSCRIBED', function () {
+		getMeetingMembers();
+	});
+
+	socketio.on('CHANNEL_UNSUBSCRIBED', function () {
+		console.log("CHANNEL_UNSUBSCRIBED");
+	});
+
+	socketio.on('SUBSCRIBE_CHANNEL_FAILED', function () {
+		console.log("SUBSCRIBE_CHANNEL_FAILED");
+	});
+
+	socketio.on('SEND_MESSAGE_FAILED', function (msg) {
+		console.log("SEND_MESSAGE_FAILED");
+	});
+
+	socketio.on('MESSAGE_SENT', function (msg) {
+	});
+}
+
+function clearTrace() {
+	var consoleTxt = $('#console-log').val();
+	$('#console-log').val("");
+}
+
+function populateMeetings() {
+	$.ajax({
+		headers: {
+			'Authorization': 'jwt ' + spacesToken,
+			'Accept': 'application/json',
+			'spaces-x-space-password': password
+		},
+		url: 'https://spacesapis.avayacloud.com/api/spaces/' + spacesID + '/meetings',
+		type: "GET",
+		dataType: "json",
+		success: function (data) {
+			var entries = data.total;
+			var attendeesTotal;
+			var meeting;
+			var displayString;
+			for (i = entries - 1; i >= 0; i--) {
+				meeting = data.data[i];
+				var meetingId = meeting._id;
+				trace("Meeting Id " + meetingId + ": ");
+				attendeesTotal = meeting.content.attendees.length;
+				trace("Total Attendees " + attendeesTotal);
+				for (j = attendeesTotal - 1; j >= 0; j--) {
+					if (meeting.content.attendees[j].type == "user") {
+						displayString = "---- " + meeting.content.attendees[j].username + ", " + meeting.content.attendees[j].displayname + ", type = " + meeting.content.attendees[j].type;
+					} else if (meeting.content.attendees[j].type == "phone") {
+						displayString = "---- " + meeting.content.attendees[j].username + " " + meeting.content.attendees[j].displayname + ", type = " + meeting.content.attendees[j].type;
+					} else {
+						displayString = "---- " + meeting.content.attendees[j].displayname + ", type = " + meeting.content.attendees[j].type;
+					}
+					trace(displayString);
+				}
+			}
+		},
+		error: function (error) {
+			console.log(`Error ${error}`);
+		}
+	});
+}
+
+function getMeetingMembers() {
+	$.ajax({
+		headers: {
+			'Authorization': 'jwt ' + spacesToken,
+			'Accept': 'application/json',
+			'spaces-x-space-password': password
+		},
+		url: 'https://spacesapis.avayacloud.com/api/spaces/' + spacesID + '/members',
+		type: "GET",
+		dataType: "json",
+		success: function (data) {
+			var entries = data.total;
+			var phoneTotal;
+			var member;
+			var displayString;
+			trace("Registered Users:");
+			for (i = entries - 1; i >= 0; i--) {
+				member = data.data[i];
+				displayString = "---- " + member.displayname + " ";
+				phoneTotal = member.phone_numbers.length;
+				for (j = phoneTotal - 1; j >= 0; j--) {
+					displayString += member.phone_numbers[j].value + " ";
+				}
+				trace(displayString);
+			}
+			populateMeetings();
+		},
+		error: function (error) {
+			console.log(`Error ${error}`);
+		}
+	});
+}
+
+
+function disconnect() {
+	var spaceToUnsubscribe = {
+		channel: {
+			_id: spacesID,
+			type: 'topic',
+			password: password
+		}
+	};
+	socketio.emit('UNSUBSCRIBE_CHANNEL', spaceToUnsubscribe);
+	init();
+	clearTrace();
+	socketio = null;
+}
+
+function startConnect() {
+	if (document.getElementById("connect").innerHTML == "Disconnect") {
+		disconnect();
+		return;
+	}
+	input = document.getElementById("password").value;
+	if (input.trim() != '') {
+		password = document.getElementById("password").value;
+	} else {
+		password = null;
+	}
+	spacesID = document.getElementById('room').value;
+	// Create an anonymous user in order to obtain a jwt token
+	$.ajax({
+		data: JSON.stringify({
+			"displayname": "Chatty McChat",
+			"username": "Anonymous"
+		}),
+		url: "https://spacesapis.avayacloud.com/api/anonymous/auth",
+		contentType: 'application/json',
+		type: 'POST',
+		success: function (data) {
+		console.log("Token " + spacesToken);
+			spacesToken = data.token;
+			joinRoom();
+			connectSocket();
+		},
+		error: function (error) {}
+	});
+}
+
+function joinRoom() {
+	// Join the space
+	$.ajax({
+		headers: {
+			'Authorization': 'jwt ' + spacesToken,
+			'Accept': 'application/json',
+			'spaces-x-space-password': password
+		},
+		url: 'https://spacesapis.avayacloud.com/api/spaces/' + spacesID + '/join',
+		type: "GET",
+		success: function (data) {
+			console.log("Room joined");
+		}
+	});
+}
+
+function trace(text) {
+	text = text.trim();
+	const now = (window.performance.now() / 1000).toFixed(3);
+	var consoleTxt = $('#console-log').val();
+	var log = text;
+	$('#console-log').val(consoleTxt + "\n\n" + log);
+}
+      </script>
+   </body>
+</html>
