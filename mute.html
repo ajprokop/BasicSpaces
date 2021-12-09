@@ -53,7 +53,6 @@
 // Copy and paste an attendee Id into the Participant field and press Mute Participant
 
 var meetingId;
-var mediaSessionId
 
 function getActive() {
 	clearTrace();
@@ -70,9 +69,6 @@ function getActive() {
             var attendeesTotal = data.content.attendees.length;
             //for (j = attendeesTotal - 1; j >= 0; j--) {
 			for (j = 0; j <= attendeesTotal - 1; j++) {
-                if (mediaSessionId = data.content.attendees[j].mdsrvSessions.length > 0) {
-                    mediaSessionId = data.content.attendees[j].mdsrvSessions[0]._id
-                }
                 trace(data.content.attendees[j]._id);
             }
         },
