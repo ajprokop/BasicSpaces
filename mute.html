@@ -67,7 +67,6 @@ function getActive() {
         success: function(data) {
             meetingId = data._id;
             var attendeesTotal = data.content.attendees.length;
-            //for (j = attendeesTotal - 1; j >= 0; j--) {
 			for (j = 0; j <= attendeesTotal - 1; j++) {
                 trace(data.content.attendees[j]._id);
             }
