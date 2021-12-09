@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Mute Participant</title>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+   </head>
+   <body>
+      <div class="container">
+         <h1>Mute Participant</h1>
+         <div class="row">
+            <div class="col-4">
+               <label for="jwt">JWT:</label>
+               <textarea class="form-control" id="jwt" rows="1"></textarea>
+            </div>
+         </div>
+         <div class="row">
+            <div class="col-3">
+               <label for="roomNumber">Room Number:</label>
+               <input class="form-control" type="text" id="roomNumber">
+            </div>
+            <div class="col-2">
+               <br>
+               <button id="getActive" class="btn btn-primary" onclick="getActive()">Get Active Meeting</button>
+            </div>
+            <br>
+         </div>
+         <div class="row">
+            <div class="col-4">
+               <label for="participant">Participant:</label>
+               <textarea class="form-control" id="participant" rows="1"></textarea>
+            </div>
+            <div class="col-2">
+               <br>
+               <button id="muteParticipant" class="btn btn-primary" onclick="muteParticipant()">Mute Participant</button>
+            </div>
+         </div>
+         <br>
+         <div class="row">
+            <div class="col-12">
+               <textarea readonly="readonly" class="form-control" id="console-log" rows="30"></textarea>
+            </div>
+         </div>
+      </div>
+      <script type="text/javascript">
+	  
+// This web application demonstrates how to mute a participant in an active meeting
+//
+// The application requires a JWT for an admin in the meeting
+// Pressing Get Active Meeting retrieves all attendee Ids
+// Copy and paste an attendee Id into the Participant field and press Mute Participant
+
+var meetingId;
+var mediaSessionId
+
+function getActive() {
+	clearTrace();
+    $.ajax({
+        headers: {
+            'Authorization': 'jwt ' + document.getElementById('jwt').value,
+            'Accept': 'application/json',
+        },
+        url: 'https://spacesapis.avayacloud.com/api/spaces/' + document.getElementById('roomNumber').value + '/activemeeting',
+        type: "GET",
+        dataType: "json",
+        success: function(data) {
+            meetingId = data._id;
+            var attendeesTotal = data.content.attendees.length;
+            //for (j = attendeesTotal - 1; j >= 0; j--) {
+			for (j = 0; j <= attendeesTotal - 1; j++) {
+                if (mediaSessionId = data.content.attendees[j].mdsrvSessions.length > 0) {
+                    mediaSessionId = data.content.attendees[j].mdsrvSessions[0]._id
+                }
+                trace(data.content.attendees[j]._id);
+            }
+        },
+        error: function(error) {
+            console.log(`Error ${error}`);
+        }
+    });
+}
+
+function muteParticipant() {
+    $.ajax({
+        headers: {
+            'Authorization': 'jwt ' + document.getElementById('jwt').value,
+            'Accept': 'application/json',
+            'Content-type': 'application/json'
+        },
+        url: 'https://spacesapis.avayacloud.com/api/spaces/' + document.getElementById('roomNumber').value + '/meetings/' + meetingId + '/attendees/user/' + document.getElementById('participant').value + '/mediastate',
+        type: "POST",
+        dataType: "json",
+        data: JSON.stringify({
+            "audio": false
+        }),
+        success: function(data) {
+            //console.dir(data);
+        },
+        error: function(error) {
+            console.log("Mute Error");
+        }
+    });
+}
+
+function clearTrace() {
+	var consoleTxt = $('#console-log').val();
+	$('#console-log').val("");
+}
+
+function trace(text) {
+    const now = (window.performance.now() / 1000).toFixed(3);
+    var consoleTxt = $('#console-log').val();
+    var log = text;
+    $('#console-log').val(consoleTxt + "\n\n" + log);
+}            
+      </script>
+   </body>
+</html>
