@@ -393,7 +393,7 @@ function startVideoForSpaces() {
 			mpaasToken = mpaasInfo.token;
 			if(socketConnection) {
 				let mediaSessionPayload = {
-					"category": "trackstatus",
+					"category": "tracksstatus",
 					"content": {
 						"mediaSession": {
 							"audio": false,
@@ -544,7 +544,7 @@ function initiateSpacesCall() {
 	call.addOnCallEstablishedCallback(function(call) {
 		conferenceCall = call;
 		let mediaSessionPayload = {
-			"category": "trackstatus",
+			"category": "tracksstatus",
 			"content": {
 				"mediaSession": {
 					"audio": true,
@@ -839,7 +839,7 @@ function muteVideo() {
 		socketConnection.emit('SEND_PRESENCE_EVENT', presencePayload);
 		conferenceCall.muteVideo().then(function() {
 			let mediaSessionPayload = {
-				"category": "trackstatus",
+				"category": "tracksstatus",
 				"content": {
 					"mediaSession": {
 						"audio": audioUnmuted,
@@ -884,7 +884,7 @@ function unmuteVideo() {
 		};
 		socketConnection.emit('SEND_PRESENCE_EVENT', presencePayload);
 		let mediaSessionPayload = {
-			"category": "trackstatus",
+			"category": "tracksstatus",
 			"content": {
 				"mediaSession": {
 					"audio": audioUnmuted,
@@ -930,7 +930,7 @@ function muteAudio() {
 		};
 		socketConnection.emit('SEND_PRESENCE_EVENT', presencePayload);
 		let mediaSessionPayload = {
-			"category": "trackstatus",
+			"category": "tracksstatus",
 			"content": {
 				"mediaSession": {
 					"audio": false,
@@ -970,7 +970,7 @@ function unmuteAudio() {
 		};
 		socketConnection.emit('SEND_PRESENCE_EVENT', presencePayload);
 		let mediaSessionPayload = {
-			"category": "trackstatus",
+			"category": "tracksstatus",
 			"content": {
 				"mediaSession": {
 					"audio": true,
