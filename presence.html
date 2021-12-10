@@ -101,6 +101,8 @@
 					trace("Media attendee added: " + msg.content.attendee.displayname + " / " + msg.content.attendee.username);
 				} else if (msg.category == "app.event.attendee.left") {
 					trace("Media attendee leaves: " + msg.content.attendee.displayname + " / " + msg.content.attendee.username);
+				} else if (msg.category == "tracksstatus") {
+					trace("Track Status: " + msg.sender.username + " " + JSON.stringify(msg.content.mediaSession));
 				}
          	}); 
          }
