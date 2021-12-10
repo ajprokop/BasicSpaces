@@ -68,7 +68,7 @@ function getActive() {
             meetingId = data._id;
             var attendeesTotal = data.content.attendees.length;
 			for (j = 0; j <= attendeesTotal - 1; j++) {
-                trace(data.content.attendees[j]._id);
+                trace(data.content.attendees[j]._id + "   " + data.content.attendees[j].username + "   " + data.content.attendees[j].displayname);
             }
         },
         error: function(error) {
