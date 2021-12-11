@@ -1,7 +1,9 @@
-const io = require('socket.io-client')
-token = "YOUR JWT TOKEN GOES HERE";
+// To run on my PC I used:  npm i socket.io-client@2.4.0
 
-var myRoom = "THE SPACES ROOM YOU WANT TO MONITOR GOES HERE";
+const io = require('socket.io-client')
+token = "Your JWT here";
+
+var myRoom = "Your Spaces room number here";
 
 const query = "token=" + token + "=jwt";
 const socket = io('https://spacesapis-socket.avayacloud.com/chat', {
