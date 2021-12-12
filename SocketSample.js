@@ -3,7 +3,7 @@ const io = require('socket.io-client')
 const request = require('request-promise');
 
 var token;
-var myRoom = "Replace with your Spaces room";
+var myRoom = "Replace with your Spaces room;
 var socket;
 
 async function getAuthToken(callback) {
@@ -78,7 +78,7 @@ getAuthToken(function(token) {
     socket.on('CHANNEL_SUBSCRIBED', function() {
         console.log('CHANNEL_SUBSCRIBED');
         // Once channel is sucessfully subscribed to, chats can be sent
-		sent(myRoom, "Room subscribed");
+		send(myRoom, "Room subscribed");
     });
 
     socket.on('SEND_MEDIA_SESSION_EVENTS', function() {
