@@ -110,7 +110,7 @@ function send(room, message) {
     var payload1 = {
         category: 'chat',
         content: {
-            bodyText: 'this is a message'
+            bodyText: message
         },
         topicId: room,
         loopbackMetadata: 'meta data'
