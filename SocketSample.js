@@ -3,7 +3,7 @@ const io = require('socket.io-client')
 const request = require('request-promise');
 
 var token;
-var myRoom = "Replace with your Spaces room;
+var myRoom = "Replace with your Spaces room";
 var socket;
 
 async function getAuthToken(callback) {
