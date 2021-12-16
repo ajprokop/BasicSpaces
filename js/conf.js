@@ -228,6 +228,18 @@ window.onbeforeunload = function() {
 	return "Do you really want to close?";
 }
 
+window.onbeforeunload = function () {
+	if (inCall) {
+		return "Do you really want to close?";
+	}
+}
+
+window.onunload = function() {
+	if (inCall) {
+		$("#connectSocket").click();
+	}
+}
+
 function chatSpace() {
 	var chatData = {
 		content: {
