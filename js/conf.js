@@ -224,9 +224,6 @@ function devicePicker() {
 	displayCameraDevices();
 	displaySpeakerDevices();
 }
-window.onbeforeunload = function() {
-	return "Do you really want to close?";
-}
 
 window.onbeforeunload = function () {
 	if (inCall) {
