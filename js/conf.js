@@ -56,6 +56,24 @@ var speakerDevices = ["junk"];
 var contentSharingRenderer;
 $(document).ready(init);
 
+         // Get the modal
+         var modal = document.getElementById("myModal");
+         
+         // Get the button that opens the modal
+         var btn = document.getElementById("floatbtn");
+         
+         // Get the <span> element that closes the modal
+         var span = document.getElementsByClassName("close")[0];
+         
+         // When the user clicks the button, open the modal 
+         btn.onclick = function() {
+           modal.style.display = "block";
+         }
+         
+         function closeModal() {
+			modal.style.display = "none";
+         }
+
 function init() {
 	$('#connectSocket').prop("disabled", false);
 	$('#muteAudio').prop("disabled", true);
@@ -72,6 +90,7 @@ function init() {
 	document.getElementById("muteAudio").style.visibility = "hidden";
 	document.getElementById("startRecording").style.visibility = "hidden";
 	document.getElementById("screenshare").style.visibility = "hidden";
+	document.getElementById("floatbtn").style.visibility = "hidden";
 	document.getElementById("connectSocket").innerHTML = '<img src="images/voice@2.png" />';
 	document.getElementById('roomNumber').style.display = 'block';
 	document.getElementById('roomLabel').style.display = 'block';
@@ -79,6 +98,7 @@ function init() {
 	document.getElementById('passwordLabel').style.display = 'block';
 	document.getElementById('userName').style.display = 'block';
 	document.getElementById('userLabel').style.display = 'block';
+	document.getElementById('chatDiv').style.display = 'none';
 	videoUnmuted = true;
 	audioUnmuted = true;
 	onScreenShare = false;
@@ -498,6 +518,8 @@ function initiateSpacesCall() {
 					document.getElementById("muteAudio").style.visibility = "visible";
 					document.getElementById("startRecording").style.visibility = "visible";
 					document.getElementById("screenshare").style.visibility = "visible";
+					document.getElementById('chatDiv').style.display = 'block';
+					document.getElementById("floatbtn").style.visibility = "visible";
 					// Hide labels and input fields
 					document.getElementById('roomNumber').style.display = 'none';
 					document.getElementById('roomLabel').style.display = 'none';

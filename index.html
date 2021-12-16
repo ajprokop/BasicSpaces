@@ -2,6 +2,8 @@
 <html>
    <head>
       <title>Spaces Integration</title>
+	  <link rel="stylesheet" href="css/float.css" />
+	  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
       <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
       <!--UI LIBS (from JavaScript Client SDK) -->
@@ -31,14 +33,14 @@
       </style>
    </head>
    <body style="background-color:WhiteSmoke;">
+      <a class="float" type="button" id="floatbtn"><i class="fa fa-plus my-float"></i></a>
       <div class="container-fluid">
-         <div class="row">
-            <div class="col">
-               <button id="connectSocket" class="btn btn-outline-primary" onclick="openSpacesConference()"><img src="images/voice@2.png"></button>
-               <button id="muteAudio" class="btn btn-outline-primary" onclick="muteAudio()"><img src="images/audio@2.png"></button>
-               <button id="muteVideo" class="btn btn-outline-primary" onclick="muteVideo()"><img src="images/video@2.png"></button>
-               <button id="startRecording" class="btn btn-outline-primary" onclick="startRecording()"><img src="images/filetype-mp4@2.png"></button>
-               <button id="screenshare" class="btn btn-outline-primary" onclick="startSreenshare()"><img src="images/screenshare-on@2.png"></button>
+	  
+	  
+      <div id="myModal" class="modal">
+         <!-- Modal content -->
+         <div class="modal-content" id="exampleModal">
+            <div class="row">
                <table id="deviceTable" style="display:none;">
                   <tr>
                      <td align="right">Set microphone:    </td>
@@ -53,6 +55,26 @@
                      <td align="left"><select class="form" cols="10" id='speakersList' name='speakersList' onClick="selectSpeakers()"></select></td>
                   </tr>
                </table>
+            </div>
+            <div class="row">
+               <div class="col-2">
+                  <br>
+                  <button id="closeModal" class="btn btn-primary" onclick="closeModal()">Close</button>
+               </div>
+            </div>
+         </div>
+      </div>	  
+	  
+	  
+	  
+         <div class="row">
+            <div class="col">
+               <button id="connectSocket" class="btn btn-outline-primary" onclick="openSpacesConference()"><img src="images/voice@2.png"></button>
+               <button id="muteAudio" class="btn btn-outline-primary" onclick="muteAudio()"><img src="images/audio@2.png"></button>
+               <button id="muteVideo" class="btn btn-outline-primary" onclick="muteVideo()"><img src="images/video@2.png"></button>
+               <button id="startRecording" class="btn btn-outline-primary" onclick="startRecording()"><img src="images/filetype-mp4@2.png"></button>
+               <button id="screenshare" class="btn btn-outline-primary" onclick="startSreenshare()"><img src="images/screenshare-on@2.png"></button>
+
             </div>
          </div>
          <div class="row">
@@ -72,7 +94,7 @@
                   </div>
                </div>
             </div>
-            <div class="col-4">
+            <div class="col-4" id="chatDiv">
                <div class="row">
                   <div class="col-8">
                      <div class="form-group">
