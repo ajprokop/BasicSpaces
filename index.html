@@ -35,29 +35,34 @@
    <body style="background-color:WhiteSmoke;">
       <a class="float" type="button" id="floatbtn"><i class="fa fa-plus my-float"></i></a>
       <div class="container-fluid">
-         <div id="myModal" class="modal">
+		 <br>
+         <div id="myModal" class="modal" tabindex="-1" role="dialog">
             <!-- Modal content -->
-            <div class="modal-content" id="exampleModal">
-               <div class="row">
-                  <table id="deviceTable" style="display:none;">
-                     <tr>
-                        <td align="right">Set microphone:    </td>
-                        <td align="left"><select class="form" cols="10" id='micList' name='micList' onClick="selectMic()"></select></td>
-                     </tr>
-                     <tr>
-                        <td align="right">Set camera:    </td>
-                        <td align="left"><select class="form" cols="10" id='cameraList' name='cameraList' onClick="selectCamera()"></select></td>
-                     </tr>
-                     <tr>
-                        <td align="right">Set speakers:    </td>
-                        <td align="left"><select class="form" cols="10" id='speakersList' name='speakersList' onClick="selectSpeakers()"></select></td>
-                     </tr>
-                  </table>
-               </div>
-               <div class="row">
-                  <div class="col-2">
-                     <br>
-                     <button id="closeModal" class="btn btn-primary" onclick="closeModal()">Close</button>
+            <div class="modal-dialog" id="exampleModal" role="document">
+               <div class="modal-content">
+                  <div class="modal-body">
+                     <div class="row">
+                        <table id="deviceTable" style="display:none;">
+                           <tr>
+                              <td align="right">Set mic:&nbsp;</td>
+                              <td align="left"><select class="form" cols="10" id='micList' name='micList' onClick="selectMic()"></select></td>
+                           </tr>
+                           <tr>
+                              <td align="right">Set camera:&nbsp;</td>
+                              <td align="left"><select class="form" cols="10" id='cameraList' name='cameraList' onClick="selectCamera()"></select></td>
+                           </tr>
+                           <tr>
+                              <td align="right">Set speakers:&nbsp;</td>
+                              <td align="left"><select class="form" cols="10" id='speakersList' name='speakersList' onClick="selectSpeakers()"></select></td>
+                           </tr>
+                        </table>
+                     </div>
+                     <div class="row">
+                        <div class="col-2">
+                           <br>
+                           <button id="closeModal" class="btn btn-primary" onclick="closeModal()">Close</button>
+                        </div>
+                     </div>
                   </div>
                </div>
             </div>
@@ -128,6 +133,7 @@
          <div class="row">
             <div id="screenReceiveFrame"></div>
          </div>
+      </div>
       </div>
    </body>
    <script src="js/conf.js"></script>

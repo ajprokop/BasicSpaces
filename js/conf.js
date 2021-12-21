@@ -56,23 +56,24 @@ var speakerDevices = ["junk"];
 var contentSharingRenderer;
 $(document).ready(init);
 
-         // Get the modal
-         var modal = document.getElementById("myModal");
+// Code for modal device selection dialog box
+// Get the modal
+var modal = document.getElementById("myModal");
          
-         // Get the button that opens the modal
-         var btn = document.getElementById("floatbtn");
+// Get the button that opens the modal
+var btn = document.getElementById("floatbtn");
          
-         // Get the <span> element that closes the modal
-         var span = document.getElementsByClassName("close")[0];
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
          
-         // When the user clicks the button, open the modal 
-         btn.onclick = function() {
-           modal.style.display = "block";
-         }
+// When the user clicks the button, open the modal 
+btn.onclick = function() {
+	modal.style.display = "block";
+}
          
-         function closeModal() {
-			modal.style.display = "none";
-         }
+function closeModal() {
+	modal.style.display = "none";
+}
 
 function init() {
 	$('#connectSocket').prop("disabled", false);
