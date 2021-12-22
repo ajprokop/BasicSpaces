@@ -549,18 +549,14 @@ function initiateSpacesCall() {
 		collaboration.addOnCollaborationServiceAvailableCallback(() => {
 			collaboration.getContentSharing().addOnContentSharingStartedCallback((contentShareing, ctx) => {
 				// A screenshare has begun.  Figure out who launched it -- local or remote
-				var isMe = false;
 				if(contentShareing._collaboration._selfParticipant._participantId == ctx._participantId) {
-					isMe = true;
+					// We initiated a screenshare
 					document.getElementById("screenshare").innerHTML = '<img src="images/screenshare-off@2.png" />';
 					updateScreensharePresence(true);
-				}
-				contentSharingRenderer = new AvayaClientServices.Renderer.Konva.KonvaContentSharingRenderer();
-				if(isMe) {
-					// We have initiated a screenshare
 					document.querySelector("#localVideoElement").srcObject = collaboration.getContentSharing().getOutgoingScreenSharingStream();
 				} else {
 					// We are receiving a screenshare
+					contentSharingRenderer = new AvayaClientServices.Renderer.Konva.KonvaContentSharingRenderer();
 					contentSharingRenderer.init(collaboration.getContentSharing(), 'screenReceiveFrame');
 				}
 			});
@@ -743,6 +739,15 @@ function joinSpace() {
 				} else if (msr.category == "app.event.meeting.ended") {
 					// Simulate user releasing session if collaboration ended by meeting Admin
 					$("#connectSocket").click();
+				}
+				if (msr.category == "tracksstatus") {
+					if (msr.sender.displayname == userName) {						
+						if (msr.content.mediaSession.audio == false) { 
+							if (audioUnmuted) { // We have been remotely muted by an admin
+								muteAudio();
+							}
+						}
+					}
 				}				
 			});
 			socketConnection.on('SEND_MESSAGE_FAILED', function(error) {
