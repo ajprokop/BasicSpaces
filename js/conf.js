@@ -34,6 +34,7 @@ let conferenceType = "";
 let user = null;
 var client;
 var userName = "Anonymous User";
+var userId;
 var videoUnmuted = true;
 var audioUnmuted = true;
 var onScreenShare = false;
@@ -426,11 +427,11 @@ function startVideoForSpaces() {
 					"category": "tracksstatus",
 					"content": {
 						"mediaSession": {
-							"audio": false,
+							"audio": true,
 							"connected": true,
 							"screenshare": false,
 							"selfMuted": true,
-							"video": false
+							"video": true
 						}
 					},
 					"topicId": spaceId,
@@ -741,7 +742,7 @@ function joinSpace() {
 					$("#connectSocket").click();
 				}
 				if (msr.category == "tracksstatus") {
-					if (msr.sender.displayname == userName) {						
+					if (msr.sender.username == userId) {						
 						if (msr.content.mediaSession.audio == false) { 
 							if (audioUnmuted) { // We have been remotely muted by an admin
 								muteAudio();
@@ -771,7 +772,18 @@ function sendMessage(messageToSend) {
 	socketConnection.emit('SEND_MESSAGE', message);
 }
 
+function makeId(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+   }
+   return result;
+}
+
 function getSpacesToken() {
+	userId = "Anonymous" + makeId(5);
 	var input = document.getElementById("userName").value;
 	if(input.trim() != '') {
 		userName = document.getElementById("userName").value;
@@ -781,7 +793,7 @@ function getSpacesToken() {
 		$.ajax("https://spacesapis.zang.io/api/anonymous/auth", {
 			data: JSON.stringify({
 				"displayname": userName,
-				"username": "Anonymous"
+				"username": userId
 			}),
 			contentType: 'application/json',
 			type: 'POST',
