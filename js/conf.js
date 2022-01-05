@@ -32,6 +32,8 @@ var socketConnection = "";
 let conferenceCall = null;
 let conferenceType = "";
 let user = null;
+var peopleInMeeting = [];
+var attendeeId = null;
 var client;
 var userName = "Anonymous User";
 var userId;
@@ -109,6 +111,9 @@ function init() {
 	initializeMicList();
 	initializeCameraList();
 	initializeSpeakersList();
+	attendeeId = null;
+	clearPeopleInMeeting();
+	peopleInMeeting = [];
 }
 
 function displayMicDevices() {
@@ -711,7 +716,15 @@ function joinSpace() {
 				console.log('Socket disconnected.');
 			});
 			socketConnection.on('PRESENCE_EVENT_RESPONSE', function(msg) {
-				if(msg.category == "app.event.presence.party.online") {} else if(msg.category == "app.event.presence.party.leaves") {} else if(msg.category == "app.event.presence.request.parties") {
+				if(msg.category == "app.event.presence.party.online") {
+					peopleInMeeting.push(msg.sender);
+					displayPeopleInMeeting(peopleInMeeting);						
+				} else if(msg.category == "app.event.presence.party.leaves") {
+					peopleInMeeting = peopleInMeeting.filter(function (person) {
+						return person['_id'] != msg.sender['_id'];
+					});
+					displayPeopleInMeeting(peopleInMeeting);				
+				} else if(msg.category == "app.event.presence.request.parties") {
 					// We are being requested to send our current presence status.
 					let presencePayload = {
 						"category": "app.event.presence.party.online",
@@ -749,6 +762,13 @@ function joinSpace() {
 							}
 						}
 					}
+				}
+				if (msr.category == "app.event.attendee.added") { 
+					if (!attendeeId) {
+						attendeeId = msr.content.attendee['_id'];
+						peopleInMeeting.push(msr.content.attendee);
+						displayPeopleInMeeting(peopleInMeeting);
+					}
 				}				
 			});
 			socketConnection.on('SEND_MESSAGE_FAILED', function(error) {
@@ -783,7 +803,7 @@ function makeId(length) {
 }
 
 function getSpacesToken() {
-	userId = "Anonymous" + makeId(5);
+	userId = "Realty" + makeId(5);
 	var input = document.getElementById("userName").value;
 	if(input.trim() != '') {
 		userName = document.getElementById("userName").value;
@@ -1057,4 +1077,27 @@ function startLocalVideo(stream) {
 function stopLocalVideo() {
 	var video = document.querySelector("#localVideoElement")
 	video.srcObject = null;
+}
+
+function displayPeopleInMeeting(people) {
+	$('#peopleInMeeting').find('.personInMeeting').remove();
+	var uniqueIds = [];
+	for (var i = 0; i < people.length; i++) {
+		if (uniqueIds.includes(people[i]['_id']) == true) {
+			continue;
+		}
+
+		uniqueIds.push(people[i]['_id']);
+
+		var displayName = people[i].displayname;
+		if (attendeeId == people[i]['_id']) {
+			displayName += " (You)";
+		}
+		var person = '<p class = "personInMeeting">' + displayName + '</p>';
+		$('#peopleInMeeting').append(person);
+	}
+}
+
+function clearPeopleInMeeting() {
+	document.getElementById("peopleInMeeting").innerHTML = "";
 }

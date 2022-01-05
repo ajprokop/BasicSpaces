@@ -30,12 +30,12 @@
          -moz-border-radius: 10px;
          -webkit-border-radius: 10px;
          }
-		 #localVideoElement {
+         #localVideoElement {
          border-radius: 10px;
          -moz-border-radius: 10px;
          -webkit-border-radius: 10px;
          }
-		 #remoteVideoElement {
+         #remoteVideoElement {
          border-radius: 10px;
          -moz-border-radius: 10px;
          -webkit-border-radius: 10px;
@@ -45,7 +45,7 @@
    <body style="background-color:WhiteSmoke;">
       <a class="float" type="button" id="floatbtn"><i class="fa fa-plus my-float"></i></a>
       <div class="container-fluid">
-		 <br>
+         <br>
          <div id="myModal" class="modal" tabindex="-1" role="dialog">
             <!-- Modal content -->
             <div class="modal-dialog" id="exampleModal" role="document">
@@ -104,21 +104,34 @@
                </div>
             </div>
             <div class="col-3" id="chatDiv" align="left">
-               <div class="row">
-                  <div class="col-8">
-                     <div class="form-group">
-                        <label for="message">Chat Message:</label>
-                        <textarea class="form-control" id="message" rows="1"></textarea>
+               <div>
+                  <ul class="nav nav-tabs">
+                     <li class="active settingshead"><a href="#chat" data-toggle="tab">Chat &nbsp;</a></li>
+                     <li class="settingshead"><a href="#people" data-toggle="tab">People</a></li>
+                  </ul>
+               </div>
+               <div class="tab-content">
+                  <div class="tab-pane active" id="chat">
+                     <div class="row">
+                        <div class="col-8">
+                           <div class="form-group">
+                              <label for="message">Chat Message:</label>
+                              <textarea class="form-control" id="message" rows="1"></textarea>
+                           </div>
+                        </div>
+                        <div class="col-4">
+                           <br>
+                           <button id="sendMsg" class="btn btn-outline-primary" onclick="chatSpace()"><img src="images/send-chat@2.png"</button>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col-12">
+                           <textarea readonly="readonly" class="form-control" id="console-log" rows="8"></textarea>
+                        </div>
                      </div>
                   </div>
-                  <div class="col-4">
-                     <br>
-                     <button id="sendMsg" class="btn btn-outline-primary" onclick="chatSpace()"><img src="images/send-chat@2.png"</button>
-                  </div>
-               </div>
-               <div class="row">
-                  <div class="col-12">
-                     <textarea readonly="readonly" class="form-control" id="console-log" rows="8"></textarea>
+                  <div class="tab-pane" id="people">
+                     <div class="bg-white px-2 py-4" id="peopleInMeeting"> </div>
                   </div>
                </div>
             </div>
