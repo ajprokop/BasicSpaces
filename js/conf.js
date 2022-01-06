@@ -114,6 +114,7 @@ function init() {
 	attendeeId = null;
 	clearPeopleInMeeting();
 	peopleInMeeting = [];
+	clearConferenceNumbers();
 }
 
 function displayMicDevices() {
@@ -629,6 +630,7 @@ function initiateSpacesCall() {
 		}
 	});
 	call.start();
+	getConfereneceNumbers();
 	document.getElementById("deviceTable").style.display = "block";
 }
 
@@ -713,7 +715,7 @@ function joinSpace() {
 				console.log('Socket error: ' + error);
 			});
 			socketConnection.on('disconnect', function() {
-				console.log('Socket disconnected.');
+				//console.log('Socket disconnected.');
 			});
 			socketConnection.on('PRESENCE_EVENT_RESPONSE', function(msg) {
 				if(msg.category == "app.event.presence.party.online") {
@@ -800,6 +802,25 @@ function makeId(length) {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
    }
    return result;
+}
+
+function getConfereneceNumbers() {
+	return new Promise(function(resolve, reject) {
+		$.ajax("https://spacesapis.avayacloud.com/api/confnumbers", {
+			type: 'GET',
+			headers: {
+				'Authorization': 'jwt ' + token,
+				'Accept': 'application/json',
+				'spaces-x-space-password': password
+			},
+			success: (data) => {
+				displayConferenceNumbers(data.data);
+			},
+			error: () => {
+				reject(null)
+			}
+		})
+	})
 }
 
 function getSpacesToken() {
@@ -1100,4 +1121,18 @@ function displayPeopleInMeeting(people) {
 
 function clearPeopleInMeeting() {
 	document.getElementById("peopleInMeeting").innerHTML = "";
+}
+
+function displayConferenceNumbers(numbers) {
+	$('#conferenceNumbers').find('.dialinNumber').remove();
+	var uniqueIds = [];
+	for (var i = 0; i < numbers.length; i++) {
+		var displayNumber = numbers[i].description + " " + numbers[i].number;
+		var dialinInfo = '<p class = "dialinNumber">' + displayNumber + '</p>';
+		$('#conferenceNumbers').append(dialinInfo);
+	}
+}
+
+function clearConferenceNumbers() {
+	document.getElementById("conferenceNumbers").innerHTML = "";
 }
