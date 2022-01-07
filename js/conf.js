@@ -817,6 +817,7 @@ function getAccessCode() {
 				$('#conferenceNumbers').find('.dialinNumber').remove();
 				var accessInfo = '<p class = "dialinNumber">' + "Access Code: " + data.settings.confId + '</p>';
 				$('#conferenceNumbers').append(accessInfo);
+				displayMembers(data.members);
 				getConfereneceNumbers();
 			},
 			error: () => {
@@ -1149,6 +1150,15 @@ function displayConferenceNumbers(numbers) {
 		var displayNumber = numbers[i].description + " " + numbers[i].number;
 		var dialinInfo = '<p class = "dialinNumber">' + displayNumber + '</p>';
 		$('#conferenceNumbers').append(dialinInfo);
+	}
+}
+
+function displayMembers(members) {
+	$('#membersList').find('.member').remove();
+	for (var i = 0; i < members.length; i++) {
+		var displayMember = members[i].displayname + " " + members[i].username;
+		var memberInfo = '<p class = "member">' + displayMember + '</p>';
+		$('#membersList').append(memberInfo);
 	}
 }
 

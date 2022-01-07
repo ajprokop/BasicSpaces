@@ -99,3 +99,14 @@ body{
     font-style: italic;
     text-align: center;
 }
+
+.member {
+    background-color: #ccf5ff;
+    border: 2px solid #eee;
+    border-radius: 0.5rem;
+    margin-top: 1%;
+    margin-bottom: 1%;
+    padding: 1%;
+    font-style: italic;
+    text-align: center;
+}
