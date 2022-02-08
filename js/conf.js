@@ -903,6 +903,17 @@ function closeSpacesConference() {
 			"loopbackMetadata": "some metadata"
 		};
 		socketConnection.emit('SEND_PRESENCE_EVENT', presencePayload);
+		
+		let mediaSessionPayload = {
+			"category": "video.end",
+			"content": {
+				"mediaSession": {
+				}
+			},
+			"topicId": spaceId
+		};
+		socketConnection.emit('SEND_MEDIA_SESSION_EVENTS', mediaSessionPayload);	
+		
 		if(conferenceCall) {
 			conferenceCall.end();
 			stopLocalVideo();
