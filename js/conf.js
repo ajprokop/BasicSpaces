@@ -846,7 +846,7 @@ function getConfereneceNumbers() {
 }
 
 function getSpacesToken() {
-	userId = "Realty" + makeId(5);
+	userId = "Anonymous" + makeId(5);
 	var input = document.getElementById("userName").value;
 	if(input.trim() != '') {
 		userName = document.getElementById("userName").value;
