@@ -6,7 +6,7 @@ This program reads in a list of names, text numbers, and messages from an Excel 
 
 */
 
-const xlsx = require('node-xlsx');
+const xlsx = require('node-xlsx'); // npm install node-xlsx --save
 const request = require('request-promise');
 
 const CPAAS_URL = "https://api-us.cpaas.avayacloud.com/v2/Accounts/";
@@ -14,9 +14,9 @@ const CPAAS_SEND_SMS = "/SMS/Messages.json"
 
 // Set the following to match your environment
 const EXCEL_FILE = "<Excel File>";
-const CPAAS_USER = "<CPAAS Account SID";
+const CPAAS_USER = "<CPAAS Account SID>";
 const CPAAS_TOKEN = "CPaaS Auth Token>";
-const CPAAS_FROM = "<CPaaS Telephone Number in E.164 Format";
+const CPAAS_FROM = "<CPaaS Telephone Number in E.164 Format>";
 
 // Parse the Excel file
 const workSheetsFromFile = xlsx.parse(EXCEL_FILE);

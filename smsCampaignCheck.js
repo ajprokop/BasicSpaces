@@ -18,9 +18,9 @@ const CPAAS_URL = "https://api-us.cpaas.avayacloud.com/v2/Accounts/";
 
 // Set the following to match your environment
 const EXCEL_FILE = "<Excel File>";
-const CPAAS_USER = "<CPAAS Account SID";
+const CPAAS_USER = "<CPAAS Account SID>";
 const CPAAS_TOKEN = "CPaaS Auth Token>";
-const CPAAS_FROM = "<CPaaS Telephone Number in E.164 Format";
+const CPAAS_FROM = "<CPaaS Telephone Number in E.164 Format>";
 
 // Parse the Excel file
 const workSheetsFromFile = xlsx.parse(EXCEL_FILE);
