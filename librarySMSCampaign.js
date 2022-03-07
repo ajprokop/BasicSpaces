@@ -47,7 +47,6 @@ xlsx.parse will create a JSON object that looks like this:
 sendTextMessages(workSheetsFromFile[0].data);
 
 async function sendTextMessages(data) {
-	const auth = "Basic " +  Buffer.from(`${CPAAS_USER }:${CPAAS_TOKEN}`, "utf-8").toString("base64");
 	for (i = 0; i < data.length; i++) {			
 		toName = data[i][0];
 		toNumber = "+1" + data[i][1].toString(); // +1 for E.164 format
