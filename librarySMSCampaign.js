@@ -18,12 +18,6 @@ const CPAAS_USER = "<CPAAS Account SID>";
 const CPAAS_TOKEN = "CPaaS Auth Token>";
 const CPAAS_FROM = "<CPaaS Telephone Number in E.164 Format>";
 
-var connector = new cpaas.SmsConnector({
-    accountSid: CPAAS_USER,
-    authToken: CPAAS_TOKEN,
-	baseUrl: CPAAS_URL
-});
-
 // Parse the Excel file
 const workSheetsFromFile = xlsx.parse(EXCEL_FILE);
 
@@ -43,6 +37,12 @@ xlsx.parse will create a JSON object that looks like this:
 [ { name: 'Sheet1', data: [ [name, number, message], [name, number, message], [name, number, message] ] } ]
 
 */
+
+var connector = new cpaas.SmsConnector({
+    accountSid: CPAAS_USER,
+    authToken: CPAAS_TOKEN,
+	baseUrl: CPAAS_URL
+});
 
 sendTextMessages(workSheetsFromFile[0].data);
 
