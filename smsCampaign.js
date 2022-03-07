@@ -6,7 +6,7 @@ This program reads in a list of names, text numbers, and messages from an Excel 
 
 */
 
-const xlsx = require('node-xlsx'); // npm install node-xlsx --save
+const xlsx = require('node-xlsx'); // npm install node-xlsx
 const request = require('request-promise');
 
 const CPAAS_URL = "https://api-us.cpaas.avayacloud.com/v2/Accounts/";
@@ -41,16 +41,16 @@ xlsx.parse will create a JSON object that looks like this:
 sendTextMessages(workSheetsFromFile[0].data);
 	
 async function sendTextMessages(data) {
-	const auth = "Basic " +  Buffer.from(CPAAS_USER + ":" + CPAAS_TOKEN, "utf-8").toString("base64");
+	const auth = "Basic " +  Buffer.from(`${CPAAS_USER }:${CPAAS_TOKEN}`, "utf-8").toString("base64");
 	for (i = 0; i < data.length; i++) {			
 		toName = data[i][0];
-		toNumber = "+1" + data[i][1].toString(); // E.164 format
+		toNumber = "+1" + data[i][1].toString(); // +1 for E.164 format
 		campaignMessage = data[i][2];
 		message = `Hello, ${toName}. ${campaignMessage}`;
 		options = {
-			url: CPAAS_URL + CPAAS_USER + CPAAS_SEND_SMS,
+			url: `${CPAAS_URL}${CPAAS_USER}${CPAAS_SEND_SMS}`,
 			body: `From=${CPAAS_FROM}&To=${toNumber}&Body=${message}`,
-			headers: {'Content-Type' : 'text/plain', 'Accept' : 'application/json', 'Authorization':auth},
+			headers: {'Content-Type' : 'text/plain', 'Accept' : 'application/json', 'Authorization' : auth},
 			method: 'POST'
 		}				
 		var response = await request.post(options, function(e , r , body) {			
