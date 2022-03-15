@@ -58,6 +58,9 @@ app.post('/cpaas-request/', function (req, res) {
 		} else if (req.body.SpeechResult == "play") {
 			processPlay(res);
 			return;
+		} else if (req.body.SpeechResult == "dial tone") {
+			processDialTone(res);
+			return;
 		}
 	}
 	sendResponseToCPaaS(prompt, hangup, res);
@@ -81,6 +84,37 @@ function generateXMLRedirect() {
 		url: REDIRECT_URL
 	});
 	xml_content.push(redirect);	
+    var xmlDefinition = ix.response({content: xml_content});
+    return xmlDefinition;	
+}
+
+async function processDialTone(res) {	
+	var xmlDefinition = generateDialTone();
+    var serverResponse = await buildCPaaSResponse(xmlDefinition);
+    res.type('application/xml');
+    res.send(serverResponse);
+}
+
+function generateDialTone() {
+	var xml_content = [];
+	var gather = ix.gather({
+		action : REQUEST_URL,
+		method : "POST",
+		input : "speech",
+		timeout : "20",
+		content : [
+			ix.play({
+				loop: 1,
+				url: "tone_stream://%(2000,0,350,440)"
+			}),
+			ix.say({
+				language: enums.Language.EN,
+				text: "Say something",
+				voice : enums.Voice.FEMALE
+			})
+		]
+	});
+	xml_content.push(gather);
     var xmlDefinition = ix.response({content: xml_content});
     return xmlDefinition;	
 }
@@ -142,7 +176,7 @@ function generateXMLSpeech(request_url,  prompt, hangup ) {
 			action : request_url,
 			method : "POST",
 			input : "speech",
-			timeout : "10",
+			timeout : "20",
 			content : [
 				ix.say({
 					language: enums.Language.EN,
@@ -158,7 +192,7 @@ function generateXMLSpeech(request_url,  prompt, hangup ) {
             text: prompt ,
             voice : enums.Voice.FEMALE
         });
-        hangup = ix.hangup();
+        var hangup = ix.hangup();
         xml_content.push(say);
         xml_content.push(hangup);
 	}	
