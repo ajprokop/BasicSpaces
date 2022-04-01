@@ -46,9 +46,9 @@ sendTextMessages(workSheetsFromFile[0].data);
 
 async function sendTextMessages(data) {
 	const auth = "Basic " +  Buffer.from(`${CPAAS_USER }:${CPAAS_TOKEN}`, "utf-8").toString("base64");
-	for (i = 0; i < data.length; i++) {	
+	for (let i in data) {	
 		// Check to see that we have a mobile number
-		toNumber = "+1" + data[i][1].toString(); // +1 for E.164 format			
+		toNumber = `+1${data[i][1].toString()}`; // +1 for E.164 format		
 		options = {
 			url: `${CPAAS_URL}${CPAAS_USER}${CPAAS_CARRIER_LOOKUP}`,
 			body: `PhoneNumber=${toNumber}`,
