@@ -211,7 +211,8 @@
          		files: [{
          			"Content-Type": selectedFile.type,
          			"Content-Length": selectedFile.size
-         		}]
+         		}],
+				topicId: spacesID
          	};
          
          	$.ajax({
@@ -393,7 +394,7 @@
          		type: 'POST',
          		success: function (data) {
          			spacesToken = data.token;
-         			// spacesToken = "";  Some functionality (e.g. uploading files) requires a JWT from a registered Spaces user.  To exercise that functionality, obtain a Spaces JWT from Chrome and overide the JWT for the anonymous user.
+         			//spacesToken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkX3NpZyI6ImRHeF9sVjk3UzlhUkVKQ3ZJYm1QTzVVZGN5Zk1JdWFhN0JiQlFXZDVBdlEiLCJwcm9kdWN0X3R5cGUiOiJhY2NvdW50cyIsImxhc3R1cGRhdGV0aW1lIjoiMjAyMS0xMS0xMVQxNjoyNToyNC4wOTkiLCJpc3MiOiJhdmF5YWNsb3VkLmNvbSIsInB1YmxpY2tleWlkIjoiYWd4emZtOXVaWE51WVRJd01UUnlHZ3NTRFVkS2QzUlFkV0pzYVdOTFpYa1lnSUR3dS1QQjBnZ00iLCJleHAiOjE2NDg3NDcxNzksInVzZXJfaWQiOiJhZ3h6Zm05dVpYTnVZVEl3TVRSeUVRc1NCRlZ6WlhJWWdJRFFoYlMwblFvTSIsInZlciI6IjIuMCJ9.otMelsJPImdamR80AOCQhLVWIi-cj_W263f1pDCft05TLOXrSJOsn6_azTJkwSMrsx0bVWmfrqc5STxrz1_ClsPaAVLsZnIYaOptfLr4D7S-6oq6gqmn82H4isq42JClfBRLE4of53niH8wacOTl6ZzuhiQHlKBB6B15dAhdpOL-XBUCMYjGUL_NdSjIi4tt4yxv8vOXMJhE8NJOlN4UWANuWRNqk4JdifHEfjnafIIml8sBTDkRPU3Hx9QrJHx9Zp8bOqAkwYrAUQCfl9q6nXNOXB_4WPVlXD3y3k3A6GBHKkJY2woGYPvYU1uYGC4SHhXCn5KRl7CWYqDEGRpmew";  //Some functionality (e.g. uploading files) requires a JWT from a registered Spaces user.  To exercise that functionality, obtain a Spaces JWT from Chrome and overide the JWT for the anonymous user.
          			joinRoom();
          			connectSocket();
          		},
