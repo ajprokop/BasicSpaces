@@ -37,6 +37,9 @@ var attendeeId = null;
 var client;
 var userName = "Anonymous User";
 var userId;
+var myUserId;
+var mediaSessionId;
+var noiseReduction = true;
 var videoUnmuted = true;
 var audioUnmuted = true;
 var onScreenShare = false;
@@ -84,6 +87,7 @@ function init() {
 	$('#muteVideo').prop("disabled", true);
 	$('#startRecording').prop("disabled", true);
 	$('#screenshare').prop("disabled", true);
+	$('#noiseReduction').prop("disabled", true);
 	$('#sendMsg').prop("disabled", true);
 	document.getElementById("deviceTable").style.display = "none";
 	document.getElementById("muteVideo").innerHTML = '<img src="images/video@2.png" />';
@@ -94,6 +98,7 @@ function init() {
 	document.getElementById("muteAudio").style.visibility = "hidden";
 	document.getElementById("startRecording").style.visibility = "hidden";
 	document.getElementById("screenshare").style.visibility = "hidden";
+	document.getElementById("noiseReduction").style.visibility = "hidden";
 	document.getElementById("floatbtn").style.visibility = "hidden";
 	document.getElementById("connectSocket").innerHTML = '<img src="images/voice@2.png" />';
 	document.getElementById('roomNumber').style.display = 'block';
@@ -115,6 +120,7 @@ function init() {
 	clearPeopleInMeeting();
 	peopleInMeeting = [];
 	clearConferenceNumbers();
+	noiseReduction = true;
 }
 
 function displayMicDevices() {
@@ -409,12 +415,27 @@ function openSpacesConference() {
 	if(token == null) {
 		getSpacesToken().then(function() {
 			joinSpace();
+			getMe();
 		}, function() {
 			console.log("token failure");
 		});
 	} else {
 		joinSpace();
 	}
+}
+
+function beginSetNoiseReduction() {
+	getMediaSessionId().then(function() {
+		setNoiseReduction(!noiseReduction);
+		if (noiseReduction) {
+			document.getElementById("noiseReduction").innerHTML = "Set NR On";
+		} else {
+			document.getElementById("noiseReduction").innerHTML = "Set NR Off";
+		}
+		noiseReduction = !noiseReduction;
+	}, function() {
+		console.log("beginSetNoiseReduction failure");
+	});
 }
 
 function startVideoForSpaces() {
@@ -530,11 +551,13 @@ function initiateSpacesCall() {
 					$('#muteAudio').prop("disabled", false);
 					$('#startRecording').prop("disabled", false);
 					$('#screenshare').prop("disabled", false);
+					$('#noiseReduction').prop("disabled", false);
 					$('#sendMsg').prop("disabled", false);
 					document.getElementById("muteVideo").style.visibility = "visible";
 					document.getElementById("muteAudio").style.visibility = "visible";
 					document.getElementById("startRecording").style.visibility = "visible";
 					document.getElementById("screenshare").style.visibility = "visible";
+					document.getElementById("noiseReduction").style.visibility = "visible";
 					document.getElementById('chatDiv').style.display = 'block';
 					document.getElementById("floatbtn").style.visibility = "visible";
 					// Hide labels and input fields
@@ -845,6 +868,28 @@ function getConfereneceNumbers() {
 	})
 }
 
+function getMediaSessionId() {
+	return new Promise(function(resolve, reject) {
+		$.ajax("https://spacesapis.avayacloud.com/api/spaces/" + spaceId + "/activemeeting", {
+			type: 'GET',
+			headers: {
+				'Authorization': 'jwt ' + token,
+				'Accept': 'application/json'
+			},
+			success: (data) => {
+				mediaSessionId = data.content.attendees[0].mdsrvSessions[0]._id;
+				meetingId = data._id;
+				console.log("mediaSessionId: " + mediaSessionId);
+				console.log("meetingId: " + meetingId);
+				resolve(data);
+			},
+			error: () => {
+				reject(null)
+			}
+		})
+	})		
+}
+
 function getSpacesToken() {
 	userId = "Anonymous" + makeId(5);
 	var input = document.getElementById("userName").value;
@@ -869,6 +914,49 @@ function getSpacesToken() {
 			}
 		})
 	})
+}
+
+function getMe() {
+	return new Promise(function(resolve, reject) {
+		$.ajax("https://spacesapis.avayacloud.com/api/users/me", {
+			type: 'GET',
+			headers: {
+				'Authorization': 'jwt ' + token,
+				'Accept': 'application/json'
+			},
+			success: (data) => {
+				myUserId = data._id;
+				resolve(data);
+			},
+			error: () => {
+				reject(null)
+			}
+		})
+	})	
+}
+
+function setNoiseReduction(setting) {
+	return new Promise(function(resolve, reject) {
+		$.ajax("https://spacesapis.avayacloud.com/api/spaces/" + spaceId + "/meetings/" + meetingId + "/attendees/user/" + myUserId + "/operation", {
+			data: JSON.stringify({
+				"isNoiseReductionEnabled": setting,
+				"mediaSessionId": mediaSessionId
+			}),
+			headers: {
+				'Authorization': 'jwt ' + token,
+				'Accept': 'application/json'
+			},
+			contentType: 'application/json',
+			type: 'POST',
+			success: (data) => {
+				console.log("Noise Reduction: " + data);
+				resolve(data);
+			},
+			error: () => {
+				reject(null)
+			}
+		})
+	})	
 }
 
 function closeSpacesConference() {
