@@ -74,6 +74,12 @@ var span = document.getElementsByClassName("close")[0];
          
 // When the user clicks the button, open the modal 
 btn.onclick = function() {
+	initializeMicList();
+	initializeCameraList();
+	initializeSpeakersList();
+	displayMicDevices();
+	displayCameraDevices();
+	displaySpeakerDevices();
 	modal.style.display = "block";
 }
          
@@ -209,6 +215,7 @@ function initializeMicList() {
 	micDevices = ["junk"];
 	var list1 = document.getElementById('micList');
 	list1.innerHTML = "";
+	list1.textContent = "";
 	list1.options[0] = new Option('--Select--', '123456');
 }
 
@@ -216,6 +223,7 @@ function initializeCameraList() {
 	cameraDevices = ["junk"];
 	var list1 = document.getElementById('cameraList');
 	list1.innerHTML = "";
+	list1.textContent = "";
 	list1.options[0] = new Option('--Select--', '123456');
 }
 
@@ -223,20 +231,8 @@ function initializeSpeakersList() {
 	speakerDevices = ["junk"];
 	var list1 = document.getElementById('speakersList');
 	list1.innerHTML = "";
+	list1.textContent = "";
 	list1.options[0] = new Option('--Select--', '123456');
-}
-
-function devicePicker() {
-	newwindow = window.open("devicepicker.html", 'name', 'height=400,width=200');
-	if(window.focus) {
-		newwindow.focus()
-	}
-	initializeMicList();
-	initializeCameraList();
-	initializeSpeakersList();
-	displayMicDevices();
-	displayCameraDevices();
-	displaySpeakerDevices();
 }
 
 window.onbeforeunload = function () {
